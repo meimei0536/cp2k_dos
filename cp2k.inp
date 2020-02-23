@@ -1,0 +1,179 @@
+ &GLOBAL
+   PROJECT_NAME PCN-223-Co
+   RUN_TYPE  CELL_OPT
+   PRINT_LEVEL  LOW
+ &END GLOBAL
+ &MOTION
+   &CELL_OPT
+     OPTIMIZER  BFGS
+     MAX_ITER  600
+     TYPE  DIRECT_CELL_OPT
+     KEEP_SYMMETRY  T
+     &BFGS
+       RESTART_HESSIAN  F
+       RESTART_FILE_NAME BFGS.Hessian
+     &END BFGS
+   &END CELL_OPT
+ &END MOTION
+ &FORCE_EVAL
+   METHOD  QS
+   STRESS_TENSOR ANALYTICAL
+   &DFT
+     BASIS_SET_FILE_NAME BASIS_ADMM
+     POTENTIAL_FILE_NAME POTENTIAL
+     UKS  T
+     MULTIPLICITY  0
+     CHARGE  0
+     WFN_RESTART_FILE_NAME PCN-223-Co-RESTART.wfn
+     &SCF
+       MAX_SCF  50
+       MAX_DIIS  8
+       EPS_SCF  1E-06
+       SCF_GUESS  RESTART
+       &OT  T
+         N_HISTORY_VEC  12
+         PRECONDITIONER  FULL_SINGLE_INVERSE
+       &END OT
+       &OUTER_SCF  T
+         EPS_SCF   1E-06
+         MAX_SCF  200
+       &END OUTER_SCF
+     &END SCF
+     &AUXILIARY_DENSITY_MATRIX_METHOD
+       ADMM_PURIFICATION_METHOD  NONE
+     &END AUXILIARY_DENSITY_MATRIX_METHOD
+     &QS
+       EPS_DEFAULT  1E-12
+       EPS_FILTER_MATRIX 1.0E-32 
+       EPS_PGF_ORB       1.0E-32
+     &END QS
+     &MGRID
+       CUTOFF  300
+       REL_CUTOFF  40
+     &END MGRID
+     &XC
+       DENSITY_CUTOFF     1E-10
+       GRADIENT_CUTOFF     1E-10
+       TAU_CUTOFF     1E-10
+       &XC_FUNCTIONAL  
+         &PBE  
+           SCALE_X 0
+           SCALE_C 1
+         &END PBE
+         &XWPBE  T
+           SCALE_X -2.5E-01
+           SCALE_X0 1
+           OMEGA  0.11
+         &END XWPBE
+       &END XC_FUNCTIONAL
+       &HF
+         FRACTION   0.25
+         &SCREENING
+           EPS_SCHWARZ   1E-06
+           EPS_SCHWARZ_FORCES  1E-06
+           SCREEN_ON_INITIAL_P  F
+         &END SCREENING
+         &INTERACTION_POTENTIAL
+           POTENTIAL_TYPE  SHORTRANGE
+           OMEGA  0.11
+         &END INTERACTION_POTENTIAL
+         &MEMORY
+           EPS_STORAGE_SCALING  0.1
+           MAX_MEMORY  2400
+         &END MEMORY
+       &END HF
+       &VDW_POTENTIAL
+         POTENTIAL_TYPE  PAIR_POTENTIAL
+         &PAIR_POTENTIAL
+           TYPE  DFTD3
+           PARAMETER_FILE_NAME ./dftd3.dat
+           REFERENCE_FUNCTIONAL PBE0
+           D3_SCALING     1.    1.129    0.109
+           CALCULATE_C9_TERM  T
+         &END PAIR_POTENTIAL
+       &END VDW_POTENTIAL
+     &END XC
+     &PRINT
+       &MO_CUBES 
+         ADD_LAST  SYMBOLIC
+         WRITE_CUBE  T
+         NLUMO  3
+         NHOMO  3
+         &EACH
+           CELL_OPT  0
+         &END EACH
+       &END MO_CUBES
+       &E_DENSITY_CUBE
+         ADD_LAST  SYMBOLIC
+         &EACH
+           CELL_OPT  0
+         &END EACH
+       &END E_DENSITY_CUBE
+       &PDOS 
+         ADD_LAST  SYMBOLIC
+         NLUMO  100
+         &EACH
+           CELL_OPT  0
+         &END EACH
+         &LDOS
+           LIST  1..273
+         &END LDOS
+       &END PDOS
+     &END PRINT
+   &END DFT
+   &SUBSYS
+     &KIND Co
+       AUX_FIT_BASIS_SET cFIT11
+       BASIS_SET DZVP-MOLOPT-SR-GTH
+       POTENTIAL GTH-PBE
+       &BS
+         &ALPHA
+           NEL -2  1
+           L 0 2
+           N 4 3
+         &END ALPHA
+         &BETA
+           NEL -2 -1
+           L 0 2
+           N 4 3
+         &END BETA
+       &END BS
+     &END KIND
+     &KIND Zr
+       AUX_FIT_BASIS_SET cFIT11
+       BASIS_SET DZVP-MOLOPT-SR-GTH
+       POTENTIAL GTH-PBE
+     &END KIND
+     &KIND O
+       AUX_FIT_BASIS_SET cpFIT3
+       BASIS_SET TZVP-MOLOPT-GTH
+       POTENTIAL GTH-PBE-q6
+     &END KIND
+     &KIND C
+       AUX_FIT_BASIS_SET cpFIT3
+       BASIS_SET TZVP-MOLOPT-GTH
+       POTENTIAL GTH-PBE-q4
+     &END KIND
+     &KIND N
+       AUX_FIT_BASIS_SET cpFIT3
+       BASIS_SET TZVP-MOLOPT-GTH
+       POTENTIAL GTH-PBE-q5
+     &END KIND
+     &KIND H
+       AUX_FIT_BASIS_SET cpFIT3
+       BASIS_SET TZVP-MOLOPT-GTH
+       POTENTIAL GTH-PBE-q1
+     &END KIND
+      &TOPOLOGY
+        COORD_FILE_FORMAT XYZ
+        COORD_FILE_NAME Initial.xyz
+      &END TOPOLOGY
+      &CELL
+         PERIODIC XYZ
+	  A     2.1595722642651470E+01    0.0000000000000000E+00    0.0000000000000000E+00
+	  B     1.0797861321325735E+01    1.8702444421618981E+01    0.0000000000000000E+00
+	  C     0.0000000000000000E+00    0.0000000000000000E+00    1.7025486992739083E+01
+         SYMMETRY HEXAGONAL
+      &END CELL
+   &END SUBSYS
+ &END FORCE_EVAL
